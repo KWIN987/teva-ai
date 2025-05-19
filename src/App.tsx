@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Code, Trash, Copy, Check, Loader2 } from 'lucide-react';
+import { Send, Terminal, Trash, Copy, Check, Loader2, Command, Key } from 'lucide-react';
 
 function App() {
   const [apiKey, setApiKey] = useState<string>('');
@@ -135,32 +135,33 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="bg-indigo-600 text-white p-4 shadow-md">
+      <header className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-6 shadow-lg">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Code size={24} />
-            <h1 className="text-xl font-bold">Assistant IA Dev Fullstack</h1>
+            <Command size={28} className="text-emerald-400" />
+            <h1 className="text-2xl font-bold tracking-tight">Assistant IA Dev Fullstack</h1>
           </div>
           <div className="flex items-center space-x-2">
             {savedApiKey ? (
               <button 
                 onClick={handleClearApiKey}
-                className="bg-indigo-700 hover:bg-indigo-800 text-white px-3 py-1 rounded-md text-sm flex items-center"
+                className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm flex items-center transition-colors duration-200"
               >
                 <Trash size={16} className="mr-1" /> Supprimer la clé API
               </button>
             ) : (
-              <div className="flex">
+              <div className="flex items-center bg-gray-700 rounded-lg p-1">
+                <Key size={16} className="text-emerald-400 ml-2" />
                 <input
                   type="password"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="Clé API OpenAI"
-                  className="bg-white text-gray-800 px-3 py-1 rounded-l-md text-sm w-64"
+                  className="bg-transparent text-white px-3 py-2 text-sm w-64 focus:outline-none placeholder-gray-400"
                 />
                 <button 
                   onClick={handleSaveApiKey}
-                  className="bg-indigo-700 hover:bg-indigo-800 text-white px-3 py-1 rounded-r-md text-sm"
+                  className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm transition-colors duration-200"
                 >
                   Sauvegarder
                 </button>
@@ -171,20 +172,20 @@ function App() {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 container mx-auto p-4 flex flex-col">
+      <main className="flex-1 container mx-auto p-6 flex flex-col max-w-6xl">
         {/* Chat messages */}
-        <div className="flex-1 overflow-y-auto mb-4 bg-white rounded-lg shadow-md p-4">
+        <div className="flex-1 overflow-y-auto mb-6 bg-white rounded-xl shadow-xl p-6 border border-gray-100">
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-gray-500">
-              <Code size={48} className="mb-4 text-indigo-500" />
-              <h2 className="text-xl font-semibold mb-2">Assistant IA Dev Fullstack</h2>
-              <p className="text-center max-w-md">
+              <Terminal size={48} className="mb-6 text-emerald-500" />
+              <h2 className="text-2xl font-semibold mb-4 text-gray-800">Assistant IA Dev Fullstack</h2>
+              <p className="text-center max-w-lg space-y-2 text-gray-600">
                 Je peux vous aider à développer des applications complètes :
-                • Frontend (React, Vue, Angular...)
-                • Backend (Node.js, Python, Java...)
-                • Base de données (SQL, NoSQL)
-                • API REST et GraphQL
-                • Tests et déploiement
+                <br />• Frontend (React, Vue, Angular...)
+                <br />• Backend (Node.js, Python, Java...)
+                <br />• Base de données (SQL, NoSQL)
+                <br />• API REST et GraphQL
+                <br />• Tests et déploiement
               </p>
             </div>
           ) : (
@@ -194,11 +195,11 @@ function App() {
                   key={index} 
                   className={`p-4 rounded-lg ${
                     msg.role === 'user' 
-                      ? 'bg-indigo-100 ml-12' 
-                      : 'bg-gray-100 mr-12'
+                      ? 'bg-emerald-50 ml-12 border border-emerald-100' 
+                      : 'bg-gray-50 mr-12 border border-gray-100'
                   }`}
                 >
-                  <div className="font-semibold mb-1">
+                  <div className="font-semibold mb-2 text-gray-700">
                     {msg.role === 'user' ? 'Vous' : 'Assistant'}
                   </div>
                   <div className="text-gray-800">
@@ -219,20 +220,20 @@ function App() {
         )}
 
         {/* Input form */}
-        <div className="bg-white rounded-lg shadow-md p-4">
+        <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-100">
           <form onSubmit={handleSubmit} className="flex items-start">
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Décrivez ce que vous souhaitez coder..."
-              className="flex-1 border border-gray-300 rounded-l-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none h-20"
+              className="flex-1 border border-gray-200 rounded-l-xl p-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none h-24 text-gray-700 placeholder-gray-400"
               disabled={isLoading}
             />
-            <div className="flex flex-col h-20">
+            <div className="flex flex-col h-24">
               <button
                 type="submit"
                 disabled={isLoading || !prompt.trim()}
-                className={`bg-indigo-600 hover:bg-indigo-700 text-white rounded-tr-lg p-3 h-1/2 flex items-center justify-center ${
+                className={`bg-emerald-500 hover:bg-emerald-600 text-white rounded-tr-xl p-4 h-1/2 flex items-center justify-center transition-colors duration-200 ${
                   (isLoading || !prompt.trim()) ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
@@ -242,7 +243,7 @@ function App() {
                 type="button"
                 onClick={handleClearChat}
                 disabled={messages.length === 0}
-                className={`bg-gray-600 hover:bg-gray-700 text-white rounded-br-lg p-3 h-1/2 flex items-center justify-center ${
+                className={`bg-gray-600 hover:bg-gray-700 text-white rounded-br-xl p-4 h-1/2 flex items-center justify-center transition-colors duration-200 ${
                   messages.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
@@ -254,9 +255,11 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-100 text-center p-4 text-gray-600 text-sm">
-        <p>Assistant IA spécialisé dans le développement fullstack. Utilise GPT-4 avec votre clé API OpenAI.</p>
-        <p className="mt-1">Capable de générer du code frontend, backend, et de gérer les bases de données.</p>
+      <footer className="bg-gray-900 text-center py-8 text-gray-400 text-sm">
+        <div className="container mx-auto max-w-4xl px-6">
+          <p className="mb-2">Assistant IA spécialisé dans le développement fullstack. Utilise GPT-4 avec votre clé API OpenAI.</p>
+          <p>Capable de générer du code frontend, backend, et de gérer les bases de données.</p>
+        </div>
       </footer>
     </div>
   );
