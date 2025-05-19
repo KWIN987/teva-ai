@@ -1,5 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Terminal, Trash, Copy, Check, Loader2, Command, Key } from 'lucide-react';
+import { Send, Terminal, Trash, Copy, Check, Loader2, Command, Key, Code, Database, Server, Layout, Settings, MessageSquare } from 'lucide-react';
+
+const SidebarLink = ({ icon: Icon, text, active = false }: { icon: React.ElementType, text: string, active?: boolean }) => (
+  <div className={`flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 ${
+    active ? 'bg-emerald-500 text-white' : 'text-gray-300 hover:bg-gray-700'
+  }`}>
+    <Icon size={20} />
+    <span className="font-medium">{text}</span>
+  </div>
+);
 
 function App() {
   const [apiKey, setApiKey] = useState<string>('');
@@ -133,31 +142,49 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <aside className="w-64 bg-gray-900 fixed h-screen flex flex-col">
+        <div className="p-6">
+          <div className="flex items-center space-x-3 mb-8">
+            <Command size={28} className="text-emerald-400" />
+            <h1 className="text-white text-xl font-bold">DevAssist</h1>
+          </div>
+          <nav className="space-y-2">
+            <SidebarLink icon={MessageSquare} text="Chat" active />
+            <SidebarLink icon={Code} text="Frontend" />
+            <SidebarLink icon={Server} text="Backend" />
+            <SidebarLink icon={Database} text="Database" />
+            <SidebarLink icon={Layout} text="UI/UX" />
+            <SidebarLink icon={Settings} text="Settings" />
+          </nav>
+        </div>
+      </aside>
+
+      <div className="flex-1 ml-64 flex flex-col">
       {/* Header */}
-      <header className="bg-gradient-to-r from-gray-900 to-gray-800 text-white p-6 shadow-lg">
+      <header className="bg-white border-b border-gray-200 text-gray-800 p-6 shadow-sm sticky top-0 z-10">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <Command size={28} className="text-emerald-400" />
-            <h1 className="text-2xl font-bold tracking-tight">Assistant IA Dev Fullstack</h1>
+            <h2 className="text-xl font-semibold">Chat Assistant</h2>
           </div>
           <div className="flex items-center space-x-2">
             {savedApiKey ? (
               <button 
                 onClick={handleClearApiKey}
-                className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm flex items-center transition-colors duration-200"
+                className="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg text-sm flex items-center transition-colors duration-200"
               >
                 <Trash size={16} className="mr-1" /> Supprimer la clé API
               </button>
             ) : (
-              <div className="flex items-center bg-gray-700 rounded-lg p-1">
-                <Key size={16} className="text-emerald-400 ml-2" />
+              <div className="flex items-center bg-gray-50 rounded-lg p-1">
+                <Key size={16} className="text-gray-400 ml-2" />
                 <input
                   type="password"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="Clé API OpenAI"
-                  className="bg-transparent text-white px-3 py-2 text-sm w-64 focus:outline-none placeholder-gray-400"
+                  className="bg-transparent text-gray-800 px-3 py-2 text-sm w-64 focus:outline-none placeholder-gray-400"
                 />
                 <button 
                   onClick={handleSaveApiKey}
@@ -172,7 +199,7 @@ function App() {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 container mx-auto p-6 flex flex-col max-w-6xl">
+      <main className="flex-1 container mx-auto p-6 flex flex-col max-w-5xl">
         {/* Chat messages */}
         <div className="flex-1 overflow-y-auto mb-6 bg-white rounded-xl shadow-xl p-6 border border-gray-100">
           {messages.length === 0 ? (
@@ -255,12 +282,13 @@ function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-center py-8 text-gray-400 text-sm">
+      <footer className="bg-white border-t border-gray-200 text-center py-6 text-gray-600 text-sm">
         <div className="container mx-auto max-w-4xl px-6">
           <p className="mb-2">Assistant IA spécialisé dans le développement fullstack. Utilise GPT-4 avec votre clé API OpenAI.</p>
           <p>Capable de générer du code frontend, backend, et de gérer les bases de données.</p>
         </div>
       </footer>
+      </div>
     </div>
   );
 }
