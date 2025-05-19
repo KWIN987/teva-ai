@@ -10,11 +10,11 @@ const SidebarLink = ({ icon: Icon, text, to }: { icon: React.ElementType, text: 
   return (
   <div 
     onClick={() => navigate(to)}
-    className={`flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 ${
+    className={`flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer transition-all duration-200 hover:scale-102 ${
       active ? 'bg-emerald-500 text-white' : 'text-gray-300 hover:bg-gray-700'
     }`}
   >
-    <Icon size={20} />
+    <Icon size={20} className={`${active ? 'animate-pulse' : ''}`} />
     <span className="font-medium">{text}</span>
   </div>
 )};
@@ -31,10 +31,10 @@ const ChatView = ({
   messagesEndRef 
 }: any) => (
   <main className="flex-1 container mx-auto p-6 flex flex-col max-w-5xl">
-    <div className="flex-1 overflow-y-auto mb-6 bg-white rounded-xl shadow-xl p-6 border border-gray-100">
+    <div className="flex-1 overflow-y-auto mb-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-xl p-6 border border-gray-100">
       {messages.length === 0 ? (
         <div className="h-full flex flex-col items-center justify-center text-gray-500">
-          <Terminal size={48} className="mb-6 text-emerald-500" />
+          <Terminal size={48} className="mb-6 text-emerald-500 animate-bounce" />
           <h2 className="text-2xl font-semibold mb-4 text-gray-800">Assistant IA Dev Fullstack</h2>
           <p className="text-center max-w-lg space-y-2 text-gray-600">
             Je peux vous aider à développer des applications complètes :
@@ -52,8 +52,8 @@ const ChatView = ({
               key={index} 
               className={`p-4 rounded-lg ${
                 msg.role === 'user' 
-                  ? 'bg-emerald-50 ml-12 border border-emerald-100' 
-                  : 'bg-gray-50 mr-12 border border-gray-100'
+                  ? 'bg-emerald-50/80 ml-12 border border-emerald-100 backdrop-blur-sm transform transition-all hover:scale-[1.02]' 
+                  : 'bg-gray-50/80 mr-12 border border-gray-100 backdrop-blur-sm transform transition-all hover:scale-[1.02]'
               }`}
             >
               <div className="font-semibold mb-2 text-gray-700">
@@ -75,13 +75,13 @@ const ChatView = ({
       </div>
     )}
 
-    <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-100">
+    <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-xl p-6 border border-gray-100">
       <form onSubmit={handleSubmit} className="flex items-start">
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Décrivez ce que vous souhaitez coder..."
-          className="flex-1 border border-gray-200 rounded-l-xl p-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none h-24 text-gray-700 placeholder-gray-400"
+          className="flex-1 border border-gray-200 rounded-l-xl p-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none h-24 text-gray-700 placeholder-gray-400 bg-white/50 backdrop-blur-sm transition-all duration-200"
           disabled={isLoading}
         />
         <div className="flex flex-col h-24">
@@ -322,7 +322,7 @@ function App() {
       <aside className="w-64 bg-gray-900 fixed h-screen flex flex-col">
         <div className="p-6">
           <div className="flex items-center space-x-3 mb-8">
-            <Command size={28} className="text-emerald-400" />
+            <Command size={28} className="text-emerald-400 animate-spin-slow" />
             <h1 className="text-white text-xl font-bold">DevAssist</h1>
           </div>
           <nav className="space-y-2">
@@ -338,7 +338,7 @@ function App() {
 
       <div className="flex-1 ml-64 flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 text-gray-800 p-6 shadow-sm sticky top-0 z-10">
+      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 text-gray-800 p-6 shadow-sm sticky top-0 z-10">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <h2 className="text-xl font-semibold">Chat Assistant</h2>
@@ -395,7 +395,7 @@ function App() {
       </Routes>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 text-center py-6 text-gray-600 text-sm">
+      <footer className="bg-white/80 backdrop-blur-sm border-t border-gray-200 text-center py-6 text-gray-600 text-sm">
         <div className="container mx-auto max-w-4xl px-6">
           <p className="mb-2">Assistant IA spécialisé dans le développement fullstack. Utilise GPT-4 avec votre clé API OpenAI.</p>
           <p>Capable de générer du code frontend, backend, et de gérer les bases de données.</p>
