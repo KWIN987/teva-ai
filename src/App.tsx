@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
-import { Send, Terminal, Trash, Copy, Check, Loader2, Command, Key, Code, Database, Server, Layout, Settings, MessageSquare, Download, Share2, Bookmark, History } from 'lucide-react';
+import { Send, Terminal, Trash, Copy, Check, Loader2, Command, Key, Code, Database, Server, Layout, Settings, MessageSquare, Download, Share2, Bookmark, History, GitBranch, TestTube, Bug, Package, Rocket } from 'lucide-react';
 
 const SidebarLink = ({ icon: Icon, text, to }: { icon: React.ElementType, text: string, to: string }) => {
   const navigate = useNavigate();
@@ -41,8 +41,11 @@ const ChatView = ({
             <br />• Frontend (React, Vue, Angular...)
             <br />• Backend (Node.js, Python, Java...)
             <br />• Base de données (SQL, NoSQL)
-            <br />• API REST et GraphQL
-            <br />• Tests et déploiement
+            <br />• Architecture et Design Patterns
+            <br />• Tests unitaires et E2E
+            <br />• CI/CD et DevOps
+            <br />• Optimisation des performances
+            <br />• Sécurité et bonnes pratiques
           </p>
         </div>
       ) : (
@@ -303,7 +306,31 @@ function App() {
           model: 'gpt-4',
           messages: [...messages, userMessage],
           temperature: 0.2,
-          max_tokens: 2000
+          max_tokens: 4000,
+          functions: [
+            {
+              name: "analyzeCode",
+              description: "Analyse le code pour détecter les problèmes potentiels",
+              parameters: {
+                type: "object",
+                properties: {
+                  code: { type: "string" },
+                  language: { type: "string" }
+                }
+              }
+            },
+            {
+              name: "suggestTests",
+              description: "Suggère des tests unitaires et d'intégration",
+              parameters: {
+                type: "object",
+                properties: {
+                  component: { type: "string" },
+                  testType: { type: "string" }
+                }
+              }
+            }
+          ]
         })
       });
 
@@ -409,10 +436,24 @@ function App() {
           
           <nav className="space-y-2">
             <SidebarLink icon={MessageSquare} text="Chat" to="/" />
+            <div className="pt-4 pb-2">
+              <div className="px-4 text-xs font-semibold text-gray-400 uppercase">Développement</div>
+            </div>
             <SidebarLink icon={Code} text="Frontend" to="/frontend" />
             <SidebarLink icon={Server} text="Backend" to="/backend" />
             <SidebarLink icon={Database} text="Database" to="/database" />
             <SidebarLink icon={Layout} text="UI/UX" to="/uiux" />
+            <div className="pt-4 pb-2">
+              <div className="px-4 text-xs font-semibold text-gray-400 uppercase">Tests & Qualité</div>
+            </div>
+            <SidebarLink icon={TestTube} text="Tests" to="/tests" />
+            <SidebarLink icon={Bug} text="Debug" to="/debug" />
+            <SidebarLink icon={Package} text="Packages" to="/packages" />
+            <div className="pt-4 pb-2">
+              <div className="px-4 text-xs font-semibold text-gray-400 uppercase">DevOps</div>
+            </div>
+            <SidebarLink icon={GitBranch} text="Git" to="/git" />
+            <SidebarLink icon={Rocket} text="Deploy" to="/deploy" />
             <SidebarLink icon={Settings} text="Settings" to="/settings" />
           </nav>
         </div>
@@ -481,6 +522,11 @@ function App() {
         <Route path="/backend" element={<BackendView />} />
         <Route path="/database" element={<DatabaseView />} />
         <Route path="/uiux" element={<UIUXView />} />
+        <Route path="/tests" element={<TestsView />} />
+        <Route path="/debug" element={<DebugView />} />
+        <Route path="/packages" element={<PackagesView />} />
+        <Route path="/git" element={<GitView />} />
+        <Route path="/deploy" element={<DeployView />} />
         <Route path="/settings" element={<SettingsView />} />
       </Routes>
 
@@ -496,4 +542,78 @@ function App() {
   );
 }
 
+const TestsView = () => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold mb-4">Tests & Quality Assurance</h2>
+    <div className="bg-white rounded-xl shadow p-6">
+      <p className="text-gray-600">Expert en tests et qualité de code :</p>
+      <ul className="mt-4 space-y-2">
+        <li className="flex items-center text-gray-700"><TestTube size={16} className="mr-2 text-emerald-500" />Tests unitaires (Jest, Vitest)</li>
+        <li className="flex items-center text-gray-700"><TestTube size={16} className="mr-2 text-emerald-500" />Tests E2E (Cypress, Playwright)</li>
+        <li className="flex items-center text-gray-700"><TestTube size={16} className="mr-2 text-emerald-500" />Tests d'intégration</li>
+        <li className="flex items-center text-gray-700"><TestTube size={16} className="mr-2 text-emerald-500" />TDD & BDD</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const DebugView = () => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold mb-4">Debugging & Performance</h2>
+    <div className="bg-white rounded-xl shadow p-6">
+      <p className="text-gray-600">Expert en débogage et optimisation :</p>
+      <ul className="mt-4 space-y-2">
+        <li className="flex items-center text-gray-700"><Bug size={16} className="mr-2 text-emerald-500" />Analyse de performance</li>
+        <li className="flex items-center text-gray-700"><Bug size={16} className="mr-2 text-emerald-500" />Débogage avancé</li>
+        <li className="flex items-center text-gray-700"><Bug size={16} className="mr-2 text-emerald-500" />Optimisation du code</li>
+        <li className="flex items-center text-gray-700"><Bug size={16} className="mr-2 text-emerald-500" />Profiling & Monitoring</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const PackagesView = () => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold mb-4">Package Management</h2>
+    <div className="bg-white rounded-xl shadow p-6">
+      <p className="text-gray-600">Expert en gestion de packages :</p>
+      <ul className="mt-4 space-y-2">
+        <li className="flex items-center text-gray-700"><Package size={16} className="mr-2 text-emerald-500" />npm/yarn/pnpm</li>
+        <li className="flex items-center text-gray-700"><Package size={16} className="mr-2 text-emerald-500" />Gestion des dépendances</li>
+        <li className="flex items-center text-gray-700"><Package size={16} className="mr-2 text-emerald-500" />Sécurité des packages</li>
+        <li className="flex items-center text-gray-700"><Package size={16} className="mr-2 text-emerald-500" />Monorepos</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const GitView = () => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold mb-4">Git & Version Control</h2>
+    <div className="bg-white rounded-xl shadow p-6">
+      <p className="text-gray-600">Expert en gestion de versions :</p>
+      <ul className="mt-4 space-y-2">
+        <li className="flex items-center text-gray-700"><GitBranch size={16} className="mr-2 text-emerald-500" />Git avancé</li>
+        <li className="flex items-center text-gray-700"><GitBranch size={16} className="mr-2 text-emerald-500" />Stratégies de branching</li>
+        <li className="flex items-center text-gray-700"><GitBranch size={16} className="mr-2 text-emerald-500" />Code review</li>
+        <li className="flex items-center text-gray-700"><GitBranch size={16} className="mr-2 text-emerald-500" />Git hooks</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const DeployView = () => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold mb-4">Deployment & DevOps</h2>
+    <div className="bg-white rounded-xl shadow p-6">
+      <p className="text-gray-600">Expert en déploiement :</p>
+      <ul className="mt-4 space-y-2">
+        <li className="flex items-center text-gray-700"><Rocket size={16} className="mr-2 text-emerald-500" />CI/CD (GitHub Actions, Jenkins)</li>
+        <li className="flex items-center text-gray-700"><Rocket size={16} className="mr-2 text-emerald-500" />Docker & Kubernetes</li>
+        <li className="flex items-center text-gray-700"><Rocket size={16} className="mr-2 text-emerald-500" />Cloud (AWS, GCP, Azure)</li>
+        <li className="flex items-center text-gray-700"><Rocket size={16} className="mr-2 text-emerald-500" />Monitoring & Logging</li>
+      </ul>
+    </div>
+  </div>
+);
 export default App;
