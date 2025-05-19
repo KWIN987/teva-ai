@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
-import { Send, Terminal, Trash, Copy, Check, Loader2, Command, Key, Code, Database, Server, Layout, Settings, MessageSquare } from 'lucide-react';
+import { Send, Terminal, Trash, Copy, Check, Loader2, Command, Key, Code, Database, Server, Layout, Settings, MessageSquare, Download, Share2, Bookmark, History } from 'lucide-react';
 
 const SidebarLink = ({ icon: Icon, text, to }: { icon: React.ElementType, text: string, to: string }) => {
   const navigate = useNavigate();
@@ -188,10 +188,13 @@ const SettingsView = () => (
 function App() {
   const [apiKey, setApiKey] = useState<string>('');
   const [prompt, setPrompt] = useState<string>('');
+  const [chatHistory, setChatHistory] = useState<Array<{id: string, title: string, messages: Array<{role: string, content: string}>}>>([]);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Array<{role: string, content: string}>>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<boolean>(false);
+  const [showHistory, setShowHistory] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [savedApiKey, setSavedApiKey] = useState<boolean>(false);
 
@@ -207,8 +210,57 @@ function App() {
   useEffect(() => {
     // Scroll to bottom of messages
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    
+    // Save current chat to localStorage
+    if (currentChatId && messages.length > 0) {
+      const updatedHistory = chatHistory.map(chat => 
+        chat.id === currentChatId ? { ...chat, messages } : chat
+      );
+      localStorage.setItem('chat_history', JSON.stringify(updatedHistory));
+      setChatHistory(updatedHistory);
+    }
   }, [messages]);
 
+  useEffect(() => {
+    // Load chat history from localStorage
+    const savedHistory = localStorage.getItem('chat_history');
+    if (savedHistory) {
+      setChatHistory(JSON.parse(savedHistory));
+    }
+  }, []);
+
+  const startNewChat = () => {
+    const newChatId = Date.now().toString();
+    const newChat = {
+      id: newChatId,
+      title: 'Nouvelle conversation',
+      messages: []
+    };
+    setChatHistory(prev => [...prev, newChat]);
+    setCurrentChatId(newChatId);
+    setMessages([]);
+  };
+
+  const loadChat = (chatId: string) => {
+    const chat = chatHistory.find(c => c.id === chatId);
+    if (chat) {
+      setCurrentChatId(chatId);
+      setMessages(chat.messages);
+    }
+  };
+
+  const exportChat = () => {
+    const chatData = JSON.stringify(messages, null, 2);
+    const blob = new Blob([chatData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `chat-export-${new Date().toISOString()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
   const handleSaveApiKey = () => {
     if (apiKey.trim()) {
       localStorage.setItem('openai_api_key', apiKey);
@@ -322,9 +374,39 @@ function App() {
       <aside className="w-64 bg-gray-900 fixed h-screen flex flex-col">
         <div className="p-6">
           <div className="flex items-center space-x-3 mb-8">
-            <Command size={28} className="text-emerald-400 animate-spin-slow" />
+            <button onClick={startNewChat} className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
+              <Command size={28} className="text-emerald-400 animate-spin-slow" />
+            </button>
             <h1 className="text-white text-xl font-bold">DevAssist</h1>
           </div>
+          
+          {/* Chat History */}
+          <div className="mb-4">
+            <button
+              onClick={() => setShowHistory(!showHistory)}
+              className="flex items-center space-x-2 text-gray-300 hover:text-white mb-2 w-full"
+            >
+              <History size={16} />
+              <span>Historique</span>
+            </button>
+            
+            {showHistory && (
+              <div className="space-y-2 ml-4">
+                {chatHistory.map(chat => (
+                  <button
+                    key={chat.id}
+                    onClick={() => loadChat(chat.id)}
+                    className={`text-sm w-full text-left px-2 py-1 rounded ${
+                      currentChatId === chat.id ? 'bg-emerald-500 text-white' : 'text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    {chat.title}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+          
           <nav className="space-y-2">
             <SidebarLink icon={MessageSquare} text="Chat" to="/" />
             <SidebarLink icon={Code} text="Frontend" to="/frontend" />
@@ -343,7 +425,15 @@ function App() {
           <div className="flex items-center space-x-2">
             <h2 className="text-xl font-semibold">Chat Assistant</h2>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-4">
+            {messages.length > 0 && (
+              <button
+                onClick={exportChat}
+                className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm flex items-center transition-colors duration-200"
+              >
+                <Download size={16} className="mr-2" /> Exporter
+              </button>
+            )}
             {savedApiKey ? (
               <button 
                 onClick={handleClearApiKey}
