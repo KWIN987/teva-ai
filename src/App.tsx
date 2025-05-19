@@ -1,12 +1,187 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { Send, Terminal, Trash, Copy, Check, Loader2, Command, Key, Code, Database, Server, Layout, Settings, MessageSquare } from 'lucide-react';
 
-const SidebarLink = ({ icon: Icon, text, active = false }: { icon: React.ElementType, text: string, active?: boolean }) => (
-  <div className={`flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 ${
-    active ? 'bg-emerald-500 text-white' : 'text-gray-300 hover:bg-gray-700'
-  }`}>
+const SidebarLink = ({ icon: Icon, text, to }: { icon: React.ElementType, text: string, to: string }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const active = location.pathname === to;
+  
+  return (
+  <div 
+    onClick={() => navigate(to)}
+    className={`flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer transition-colors duration-200 ${
+      active ? 'bg-emerald-500 text-white' : 'text-gray-300 hover:bg-gray-700'
+    }`}
+  >
     <Icon size={20} />
     <span className="font-medium">{text}</span>
+  </div>
+)};
+
+const ChatView = ({ 
+  messages, 
+  isLoading, 
+  error, 
+  prompt, 
+  handleSubmit, 
+  setPrompt, 
+  handleClearChat, 
+  formatMessage, 
+  messagesEndRef 
+}: any) => (
+  <main className="flex-1 container mx-auto p-6 flex flex-col max-w-5xl">
+    <div className="flex-1 overflow-y-auto mb-6 bg-white rounded-xl shadow-xl p-6 border border-gray-100">
+      {messages.length === 0 ? (
+        <div className="h-full flex flex-col items-center justify-center text-gray-500">
+          <Terminal size={48} className="mb-6 text-emerald-500" />
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Assistant IA Dev Fullstack</h2>
+          <p className="text-center max-w-lg space-y-2 text-gray-600">
+            Je peux vous aider à développer des applications complètes :
+            <br />• Frontend (React, Vue, Angular...)
+            <br />• Backend (Node.js, Python, Java...)
+            <br />• Base de données (SQL, NoSQL)
+            <br />• API REST et GraphQL
+            <br />• Tests et déploiement
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {messages.map((msg: any, index: number) => (
+            <div 
+              key={index} 
+              className={`p-4 rounded-lg ${
+                msg.role === 'user' 
+                  ? 'bg-emerald-50 ml-12 border border-emerald-100' 
+                  : 'bg-gray-50 mr-12 border border-gray-100'
+              }`}
+            >
+              <div className="font-semibold mb-2 text-gray-700">
+                {msg.role === 'user' ? 'Vous' : 'Assistant'}
+              </div>
+              <div className="text-gray-800">
+                {formatMessage(msg.content)}
+              </div>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+      )}
+    </div>
+
+    {error && (
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        {error}
+      </div>
+    )}
+
+    <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-100">
+      <form onSubmit={handleSubmit} className="flex items-start">
+        <textarea
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          placeholder="Décrivez ce que vous souhaitez coder..."
+          className="flex-1 border border-gray-200 rounded-l-xl p-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none h-24 text-gray-700 placeholder-gray-400"
+          disabled={isLoading}
+        />
+        <div className="flex flex-col h-24">
+          <button
+            type="submit"
+            disabled={isLoading || !prompt.trim()}
+            className={`bg-emerald-500 hover:bg-emerald-600 text-white rounded-tr-xl p-4 h-1/2 flex items-center justify-center transition-colors duration-200 ${
+              (isLoading || !prompt.trim()) ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
+          </button>
+          <button
+            type="button"
+            onClick={handleClearChat}
+            disabled={messages.length === 0}
+            className={`bg-gray-600 hover:bg-gray-700 text-white rounded-br-xl p-4 h-1/2 flex items-center justify-center transition-colors duration-200 ${
+              messages.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            <Trash size={20} />
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+);
+
+const FrontendView = () => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold mb-4">Frontend Development</h2>
+    <div className="bg-white rounded-xl shadow p-6">
+      <p className="text-gray-600">Spécialisé dans le développement frontend avec :</p>
+      <ul className="mt-4 space-y-2">
+        <li className="flex items-center text-gray-700"><Code size={16} className="mr-2 text-emerald-500" />React et son écosystème</li>
+        <li className="flex items-center text-gray-700"><Code size={16} className="mr-2 text-emerald-500" />Vue.js et Nuxt</li>
+        <li className="flex items-center text-gray-700"><Code size={16} className="mr-2 text-emerald-500" />Angular</li>
+        <li className="flex items-center text-gray-700"><Code size={16} className="mr-2 text-emerald-500" />HTML5, CSS3, JavaScript moderne</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const BackendView = () => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold mb-4">Backend Development</h2>
+    <div className="bg-white rounded-xl shadow p-6">
+      <p className="text-gray-600">Expert en développement backend avec :</p>
+      <ul className="mt-4 space-y-2">
+        <li className="flex items-center text-gray-700"><Server size={16} className="mr-2 text-emerald-500" />Node.js et Express</li>
+        <li className="flex items-center text-gray-700"><Server size={16} className="mr-2 text-emerald-500" />Python et Django/Flask</li>
+        <li className="flex items-center text-gray-700"><Server size={16} className="mr-2 text-emerald-500" />Java Spring Boot</li>
+        <li className="flex items-center text-gray-700"><Server size={16} className="mr-2 text-emerald-500" />API REST et GraphQL</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const DatabaseView = () => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold mb-4">Database Management</h2>
+    <div className="bg-white rounded-xl shadow p-6">
+      <p className="text-gray-600">Expert en bases de données avec :</p>
+      <ul className="mt-4 space-y-2">
+        <li className="flex items-center text-gray-700"><Database size={16} className="mr-2 text-emerald-500" />PostgreSQL</li>
+        <li className="flex items-center text-gray-700"><Database size={16} className="mr-2 text-emerald-500" />MongoDB</li>
+        <li className="flex items-center text-gray-700"><Database size={16} className="mr-2 text-emerald-500" />MySQL/MariaDB</li>
+        <li className="flex items-center text-gray-700"><Database size={16} className="mr-2 text-emerald-500" />Redis</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const UIUXView = () => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold mb-4">UI/UX Design</h2>
+    <div className="bg-white rounded-xl shadow p-6">
+      <p className="text-gray-600">Expert en design d'interface avec :</p>
+      <ul className="mt-4 space-y-2">
+        <li className="flex items-center text-gray-700"><Layout size={16} className="mr-2 text-emerald-500" />Design System</li>
+        <li className="flex items-center text-gray-700"><Layout size={16} className="mr-2 text-emerald-500" />Responsive Design</li>
+        <li className="flex items-center text-gray-700"><Layout size={16} className="mr-2 text-emerald-500" />Animations et Transitions</li>
+        <li className="flex items-center text-gray-700"><Layout size={16} className="mr-2 text-emerald-500" />Accessibilité (a11y)</li>
+      </ul>
+    </div>
+  </div>
+);
+
+const SettingsView = () => (
+  <div className="p-6">
+    <h2 className="text-2xl font-bold mb-4">Settings</h2>
+    <div className="bg-white rounded-xl shadow p-6">
+      <p className="text-gray-600">Configuration de l'assistant :</p>
+      <ul className="mt-4 space-y-2">
+        <li className="flex items-center text-gray-700"><Settings size={16} className="mr-2 text-emerald-500" />Gestion de l'API Key</li>
+        <li className="flex items-center text-gray-700"><Settings size={16} className="mr-2 text-emerald-500" />Préférences</li>
+        <li className="flex items-center text-gray-700"><Settings size={16} className="mr-2 text-emerald-500" />Thème</li>
+        <li className="flex items-center text-gray-700"><Settings size={16} className="mr-2 text-emerald-500" />Langue</li>
+      </ul>
+    </div>
   </div>
 );
 
@@ -151,12 +326,12 @@ function App() {
             <h1 className="text-white text-xl font-bold">DevAssist</h1>
           </div>
           <nav className="space-y-2">
-            <SidebarLink icon={MessageSquare} text="Chat" active />
-            <SidebarLink icon={Code} text="Frontend" />
-            <SidebarLink icon={Server} text="Backend" />
-            <SidebarLink icon={Database} text="Database" />
-            <SidebarLink icon={Layout} text="UI/UX" />
-            <SidebarLink icon={Settings} text="Settings" />
+            <SidebarLink icon={MessageSquare} text="Chat" to="/" />
+            <SidebarLink icon={Code} text="Frontend" to="/frontend" />
+            <SidebarLink icon={Server} text="Backend" to="/backend" />
+            <SidebarLink icon={Database} text="Database" to="/database" />
+            <SidebarLink icon={Layout} text="UI/UX" to="/uiux" />
+            <SidebarLink icon={Settings} text="Settings" to="/settings" />
           </nav>
         </div>
       </aside>
@@ -198,88 +373,26 @@ function App() {
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="flex-1 container mx-auto p-6 flex flex-col max-w-5xl">
-        {/* Chat messages */}
-        <div className="flex-1 overflow-y-auto mb-6 bg-white rounded-xl shadow-xl p-6 border border-gray-100">
-          {messages.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-gray-500">
-              <Terminal size={48} className="mb-6 text-emerald-500" />
-              <h2 className="text-2xl font-semibold mb-4 text-gray-800">Assistant IA Dev Fullstack</h2>
-              <p className="text-center max-w-lg space-y-2 text-gray-600">
-                Je peux vous aider à développer des applications complètes :
-                <br />• Frontend (React, Vue, Angular...)
-                <br />• Backend (Node.js, Python, Java...)
-                <br />• Base de données (SQL, NoSQL)
-                <br />• API REST et GraphQL
-                <br />• Tests et déploiement
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {messages.map((msg, index) => (
-                <div 
-                  key={index} 
-                  className={`p-4 rounded-lg ${
-                    msg.role === 'user' 
-                      ? 'bg-emerald-50 ml-12 border border-emerald-100' 
-                      : 'bg-gray-50 mr-12 border border-gray-100'
-                  }`}
-                >
-                  <div className="font-semibold mb-2 text-gray-700">
-                    {msg.role === 'user' ? 'Vous' : 'Assistant'}
-                  </div>
-                  <div className="text-gray-800">
-                    {formatMessage(msg.content)}
-                  </div>
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-          )}
-        </div>
-
-        {/* Error message */}
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
-
-        {/* Input form */}
-        <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-100">
-          <form onSubmit={handleSubmit} className="flex items-start">
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Décrivez ce que vous souhaitez coder..."
-              className="flex-1 border border-gray-200 rounded-l-xl p-4 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none h-24 text-gray-700 placeholder-gray-400"
-              disabled={isLoading}
-            />
-            <div className="flex flex-col h-24">
-              <button
-                type="submit"
-                disabled={isLoading || !prompt.trim()}
-                className={`bg-emerald-500 hover:bg-emerald-600 text-white rounded-tr-xl p-4 h-1/2 flex items-center justify-center transition-colors duration-200 ${
-                  (isLoading || !prompt.trim()) ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-              >
-                {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
-              </button>
-              <button
-                type="button"
-                onClick={handleClearChat}
-                disabled={messages.length === 0}
-                className={`bg-gray-600 hover:bg-gray-700 text-white rounded-br-xl p-4 h-1/2 flex items-center justify-center transition-colors duration-200 ${
-                  messages.length === 0 ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-              >
-                <Trash size={20} />
-              </button>
-            </div>
-          </form>
-        </div>
-      </main>
+      <Routes>
+        <Route path="/" element={
+          <ChatView 
+            messages={messages}
+            isLoading={isLoading}
+            error={error}
+            prompt={prompt}
+            handleSubmit={handleSubmit}
+            setPrompt={setPrompt}
+            handleClearChat={handleClearChat}
+            formatMessage={formatMessage}
+            messagesEndRef={messagesEndRef}
+          />
+        } />
+        <Route path="/frontend" element={<FrontendView />} />
+        <Route path="/backend" element={<BackendView />} />
+        <Route path="/database" element={<DatabaseView />} />
+        <Route path="/uiux" element={<UIUXView />} />
+        <Route path="/settings" element={<SettingsView />} />
+      </Routes>
 
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 text-center py-6 text-gray-600 text-sm">
