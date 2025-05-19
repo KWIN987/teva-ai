@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
-import { Send, Terminal, Trash, Copy, Check, Loader2, Command, Key, Code, Database, Server, Layout, Settings, MessageSquare, Download, Share2, Bookmark, History, GitBranch, TestTube, Bug, Package, Rocket } from 'lucide-react';
+import { Send, Terminal, Trash, Copy, Check, Loader2, Command, Key, Code, Database, Server, Layout, Settings, MessageSquare, Download, History, GitBranch, TestTube, Bug, Package, Rocket, Sparkles, Brain, Coffee } from 'lucide-react';
 
 const SidebarLink = ({ icon: Icon, text, to }: { icon: React.ElementType, text: string, to: string }) => {
   const navigate = useNavigate();
@@ -34,18 +34,36 @@ const ChatView = ({
     <div className="flex-1 overflow-y-auto mb-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-xl p-6 border border-gray-100">
       {messages.length === 0 ? (
         <div className="h-full flex flex-col items-center justify-center text-gray-500">
-          <Terminal size={48} className="mb-6 text-emerald-500 animate-bounce" />
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Assistant IA Dev Fullstack</h2>
+          <Brain size={48} className="mb-6 text-emerald-500 animate-pulse" />
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Assistant IA Développeur</h2>
           <p className="text-center max-w-lg space-y-2 text-gray-600">
-            Je peux vous aider à développer des applications complètes :
-            <br />• Frontend (React, Vue, Angular...)
-            <br />• Backend (Node.js, Python, Java...)
-            <br />• Base de données (SQL, NoSQL)
-            <br />• Architecture et Design Patterns
-            <br />• Tests unitaires et E2E
-            <br />• CI/CD et DevOps
-            <br />• Optimisation des performances
-            <br />• Sécurité et bonnes pratiques
+            <span className="block mb-4">Je suis votre partenaire de développement, spécialisé en :</span>
+            <div className="grid grid-cols-2 gap-4 text-left">
+              <div className="flex items-center space-x-2">
+                <Sparkles className="text-emerald-500" size={16} />
+                <span>Architecture logicielle</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Code className="text-emerald-500" size={16} />
+                <span>Développement fullstack</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Database className="text-emerald-500" size={16} />
+                <span>Bases de données</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <TestTube className="text-emerald-500" size={16} />
+                <span>Tests & Qualité</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Rocket className="text-emerald-500" size={16} />
+                <span>DevOps & CI/CD</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Coffee className="text-emerald-500" size={16} />
+                <span>Bonnes pratiques</span>
+              </div>
+            </div>
           </p>
         </div>
       ) : (
@@ -464,7 +482,8 @@ function App() {
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 text-gray-800 p-6 shadow-sm sticky top-0 z-10">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <h2 className="text-xl font-semibold">Chat Assistant</h2>
+            <Brain size={24} className="text-emerald-500" />
+            <h2 className="text-xl font-semibold">Assistant Développeur</h2>
           </div>
           <div className="flex items-center space-x-4">
             {messages.length > 0 && (
@@ -533,8 +552,11 @@ function App() {
       {/* Footer */}
       <footer className="bg-white/80 backdrop-blur-sm border-t border-gray-200 text-center py-6 text-gray-600 text-sm">
         <div className="container mx-auto max-w-4xl px-6">
-          <p className="mb-2">Assistant IA spécialisé dans le développement fullstack. Utilise GPT-4 avec votre clé API OpenAI.</p>
-          <p>Capable de générer du code frontend, backend, et de gérer les bases de données.</p>
+          <div className="flex items-center justify-center space-x-2 mb-2">
+            <Brain size={16} className="text-emerald-500" />
+            <p>Propulsé par GPT-4 • Spécialisé en développement logiciel</p>
+          </div>
+          <p className="text-xs text-gray-500">Votre partenaire pour un code propre, maintenable et performant</p>
         </div>
       </footer>
       </div>
